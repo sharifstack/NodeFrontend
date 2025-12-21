@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import Home from "./components/pages/Home";
 import { CreateCategory } from "./components/dashboard/CreateCategory";
 import Login from "./components/pages/Login";
+import Registration from "./components/pages/Registration";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         </Route>
         {/* Auth */}
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Registration />} />
       </Routes>
     </BrowserRouter>
   );

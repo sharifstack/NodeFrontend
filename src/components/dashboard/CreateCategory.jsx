@@ -69,7 +69,7 @@ export function CreateCategory() {
     <>
       <FullScreenLoader show={loading} />
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-1/2 border rounded-2xl shadow-lg p-20 mx-auto my-[20vh]">
           {/* Name */}
           <FormField
             control={form.control}
