@@ -48,12 +48,7 @@ export function CreateCategory() {
     setLoading(true);
 
     try {
-      const res = await api.post("/category/create_category", formData, {
-        Headers: {
-          Authorization: `Bearer ${"dawdawhdawjkhd"}`,
-          " content-type": "multipart/form-data",
-        },
-      });
+      const res = await api.post("/category/create_category", formData);
       if (res.status == 201) {
         console.log(res.data);
       }
@@ -69,7 +64,10 @@ export function CreateCategory() {
     <>
       <FullScreenLoader show={loading} />
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-1/2 border rounded-2xl shadow-lg p-20 mx-auto my-[20vh]">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6 w-1/2 border rounded-2xl shadow-lg p-20 mx-auto my-[20vh]"
+        >
           {/* Name */}
           <FormField
             control={form.control}

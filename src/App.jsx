@@ -3,6 +3,8 @@ import Home from "./components/pages/Home";
 import { CreateCategory } from "./components/dashboard/CreateCategory";
 import Login from "./components/pages/Login";
 import Registration from "./components/pages/Registration";
+import CategoryList from "./components/dashboard/CategoryList";
+import EditCategoryList from "./components/dashboard/EditCategoryList";
 
 function App() {
   return (
@@ -10,7 +12,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />}>
           <Route path="/create-category" element={<CreateCategory />} />
-          <Route path="/category-list" element={"Category-List"} />
+          <Route path="/category-list" element={<CategoryList />} />
+          <Route path="/edit-categorylist/:slug" element={<EditCategoryList />} />
           <Route path="/create-subcategory" element={"Create Sub-Category"} />
         </Route>
         {/* Auth */}

@@ -6,26 +6,60 @@ const api = axios.create({
 });
 
 // Add a request interceptor
-axios.interceptors.request.use(
+api.interceptors.request.use(
   function (config) {
-    // Do something before request is sent
+    const accessToken = localStorage.getItem("accessToken");
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
     return config;
   },
   function (error) {
-    // Do something with request error
     return Promise.reject(error);
   }
 );
 
-// Add a response interceptor
-axios.interceptors.response.use(
+// Response Interceptor
+api.interceptors.response.use(
   (res) => res,
   async (error) => {
-    try {
-    } catch (error) {
-      return Promise.reject(error);
+    console.log("error", error);
+    const originalRequest = error.config;
+
+    // Token expired (use your actual backend status)
+    if (error.response?.status === 410 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/api/v1/auth/refresh-token",
+          {},
+          { withCredentials: true }
+        );
+
+        if (response.status === 200) {
+          const newToken = response.data.data.accessToken;
+          console.log("newToken", newToken);
+          // Store in localStorage
+          localStorage.setItem("accessToken", newToken);
+
+          // Update header for future requests
+          api.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
+
+          // Update header for this retry request
+          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+
+          return api(originalRequest);
+        }
+      } catch (refreshError) {
+        console.error("axiox interceptor eeror ", refreshError);
+        localStorage.removeItem("accessToken");
+        window.location.href = "/login";
+        return Promise.reject(refreshError);
+      }
     }
+
+    return Promise.reject(error);
   }
 );
-
 export { api };
