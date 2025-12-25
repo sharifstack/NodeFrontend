@@ -5,22 +5,31 @@ import Login from "./components/pages/Login";
 import Registration from "./components/pages/Registration";
 import CategoryList from "./components/dashboard/CategoryList";
 import EditCategoryList from "./components/dashboard/EditCategoryList";
-
+import SubCategory from "./components/dashboard/SubCategory/SubCategory";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 function App() {
+  const queryClient = new QueryClient();
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />}>
-          <Route path="/create-category" element={<CreateCategory />} />
-          <Route path="/category-list" element={<CategoryList />} />
-          <Route path="/edit-categorylist/:slug" element={<EditCategoryList />} />
-          <Route path="/create-subcategory" element={"Create Sub-Category"} />
-        </Route>
-        {/* Auth */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Registration />} />
-      </Routes>
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />}>
+            <Route path="/create-category" element={<CreateCategory />} />
+            <Route path="/category-list" element={<CategoryList />} />
+            <Route
+              path="/edit-categorylist/:slug"
+              element={<EditCategoryList />}
+            />
+            <Route path="/create-subcategory" element={<SubCategory />} />
+          </Route>
+          {/* Auth */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Registration />} />
+        </Routes>
+      </BrowserRouter>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 }
 
