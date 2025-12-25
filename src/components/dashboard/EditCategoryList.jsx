@@ -1,17 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { useNavigate, useParams } from "react-router";
+import { api } from "../../helpers/axios";
 
 const EditCategoryList = () => {
+  const navigate = useNavigate();
+  const { slug } = useParams();
+  const [defaultdata, setDefaultdata] = useState({});
+
   const [name, setName] = useState("Electronics");
-  const [image, setImage] = useState("https://via.placeholder.com/300");
+  const [image, setImage] = useState(null);
   const [file, setFile] = useState(null);
+
+  useEffect(() => {
+    const abort = new AbortController();
+    const getCategories = async () => {
+      try {
+        const res = await api.get(`/category/singlecategory/${slug}`);
+        setDefaultdata(res?.data?.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getCategories();
+    return () => abort.abort();
+  }, []);
 
   const handleImageChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -31,6 +51,13 @@ const EditCategoryList = () => {
     console.log("UPDATE CATEGORY 👉", { name, file });
   };
 
+  //handle back
+  const handleBack = () => {
+    navigate("/category-list");
+  };
+
+  console.log(defaultdata);
+
   return (
     <div className="w-1/2 mx-auto mt-20">
       <Card className="rounded-2xl shadow-lg">
@@ -44,7 +71,7 @@ const EditCategoryList = () => {
           {/* Image Preview */}
           <div className="flex flex-col items-center gap-3">
             <Avatar className="h-28 w-28 shadow-md">
-              <AvatarImage src={image} />
+              <AvatarImage src={defaultdata?.image || image} />
               <AvatarFallback>{name.charAt(0)}</AvatarFallback>
             </Avatar>
 
@@ -69,15 +96,24 @@ const EditCategoryList = () => {
             <Label>Category Name</Label>
             <Input
               placeholder="Enter category name"
-              value={name}
+              value={defaultdata?.name}
               onChange={(e) => setName(e.target.value)}
             />
           </div>
 
           {/* Actions */}
           <div className="flex justify-end gap-3 pt-4">
-            <Button variant="outline">Cancel</Button>
-            <Button>Update Category</Button>
+            <Button
+              className="cursor-pointer"
+              onClick={handleBack}
+              variant="outline"
+            >
+              Back
+            </Button>
+            <Button className="cursor-pointer" variant="outline">
+              Cancel
+            </Button>
+            <Button className="cursor-pointer">Update Category</Button>
           </div>
         </CardContent>
       </Card>

@@ -60,12 +60,21 @@ const CategoryList = () => {
     console.log("delete", res);
   };
 
+  //Add category
+  const HandleAddCategory = () => {
+    navigate("/create-category");
+  };
+
   return (
     <Card className="shadow-lg rounded-2xl">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-xl font-semibold">Category List</CardTitle>
 
-        <Button className="cursor-pointer" size="sm">
+        <Button
+          onClick={HandleAddCategory}
+          className="cursor-pointer"
+          size="sm"
+        >
           Add Category
         </Button>
       </CardHeader>
