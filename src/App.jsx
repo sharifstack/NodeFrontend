@@ -8,6 +8,7 @@ import EditCategoryList from "./components/dashboard/EditCategoryList";
 import SubCategory from "./components/dashboard/SubCategory/SubCategory";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import SubCategoryList from "./components/dashboard/SubCategory/SubCategoryList";
 function App() {
   const queryClient = new QueryClient();
   return (
@@ -22,6 +23,7 @@ function App() {
               element={<EditCategoryList />}
             />
             <Route path="/create-subcategory" element={<SubCategory />} />
+            <Route path="/subcategory-list" element={<SubCategoryList />} />
           </Route>
           {/* Auth */}
           <Route path="/login" element={<Login />} />

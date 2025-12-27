@@ -82,7 +82,7 @@ const data = {
         },
         {
           title: "SubCategory-List",
-          url: "#",
+          url: "subcategory-list",
         },
       ],
     },

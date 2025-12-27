@@ -29,6 +29,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useCreateSubCategory, useGetAllCategories } from "../../../hooks/api";
+import FullScreenLoader from "../../ui/FullScreenLoader";
+import ErrorPage from "../../pages/ErrorPage";
 
 /* =========================
    Zod Schema
@@ -56,12 +58,21 @@ const SubCategory = () => {
     },
   });
 
-  const { data, isPending, isError, error, refetch } = useGetAllCategories();
+  const { data, isPending, isError, refetch } = useGetAllCategories();
   const createSubCategory = useCreateSubCategory();
-  if (isPending) return <div>Loading... {isPending}</div>;
+  if (isPending) {
+    return <FullScreenLoader show={true} />;
+  }
+
+  //error state
   if (isError) {
-    console.log(error);
-    return <div>Error loading categories</div>;
+    return (
+      <ErrorPage
+        title="Failed to load Create sub-categories"
+        description="Please check your internet connection or try again."
+        onRetry={refetch}
+      />
+    );
   }
   function onSubmit(values) {
     createSubCategory.mutate(values);

@@ -39,7 +39,6 @@ api.interceptors.response.use(
 
         if (response.status === 200) {
           const newToken = response.data.data.accessToken;
-          console.log("newToken", newToken);
           // Store in localStorage
           localStorage.setItem("accessToken", newToken);
 

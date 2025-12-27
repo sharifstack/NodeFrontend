@@ -12,9 +12,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { api } from "../../helpers/axios";
-import { useState } from "react";
+import { useCreateCategory } from "../../hooks/api";
 import FullScreenLoader from "../ui/FullScreenLoader";
+import ErrorPage from "../pages/ErrorPage";
 
 /* =========================
    Zod Schema
@@ -32,7 +32,6 @@ const formSchema = z.object({
 });
 
 export function CreateCategory() {
-  const [loading, setLoading] = useState(false);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -41,28 +40,35 @@ export function CreateCategory() {
     },
   });
 
-  async function onSubmit(values) {
-    const formData = new FormData();
-    formData.append("name", values.name);
-    formData.append("image", values.image);
-    setLoading(true);
+  const createCategory = useCreateCategory();
 
-    try {
-      const res = await api.post("/category/create_category", formData);
-      if (res.status == 201) {
-        console.log(res.data);
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-    // API call here
+  async function onSubmit(values) {
+    createCategory.mutate(values);
+  }
+
+  // pending
+  if (createCategory.isPending) {
+    return (
+      <div>
+        <FullScreenLoader show={true} />
+      </div>
+    );
+  }
+
+  //error state
+  if (createCategory.isError) {
+    return (
+      <div>
+        <ErrorPage
+          title="Failed to create category"
+          description={createCategory.error?.response?.data?.message}
+        />
+      </div>
+    );
   }
 
   return (
     <>
-      <FullScreenLoader show={loading} />
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

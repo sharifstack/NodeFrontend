@@ -7,6 +7,31 @@ import {
 } from "@tanstack/react-query";
 import { api } from "../helpers/axios";
 
+//create category
+export const useCreateCategory = () => {
+  return useMutation({
+    queryKey: ["createCategory"],
+    mutationFn: (values) => {
+      const imageFile = values.image;
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("image", imageFile);
+      return api.post("/category/create_category", formData);
+    },
+    onError: (error, onMutateResult) => {
+      // An error happened!
+      console.log(error);
+      console.log(`rolling back optimistic update with id ${onMutateResult}`);
+    },
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onSettled: (data, error, variables, onMutateResult, context) => {
+      // Invalidate and refetch or reset
+    },
+  });
+};
+
 //get all categories
 export const useGetAllCategories = () => {
   return useQuery({
@@ -40,6 +65,17 @@ export const useCreateSubCategory = () => {
     },
     onSettled: (data, error, variables, onMutateResult, context) => {
       // Invalidate and refetch or reset
+    },
+  });
+};
+
+//get all subcategories
+export const useGetAllSubCategories = () => {
+  return useQuery({
+    queryKey: ["getAllSubCategories"],
+    queryFn: async () => {
+      const res = await api.get("/subcategory/all-subcategory");
+      return res.data;
     },
   });
 };
