@@ -6,6 +6,8 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { api } from "../helpers/axios";
+import { Slide, toast } from "react-toastify";
+import { toastSuccess } from "../helpers/toast";
 
 //create category
 export const useCreateCategory = () => {
@@ -76,6 +78,33 @@ export const useGetAllSubCategories = () => {
     queryFn: async () => {
       const res = await api.get("/subcategory/all-subcategory");
       return res.data;
+    },
+  });
+};
+
+//create brand
+export const useCreateBrand = () => {
+  return useMutation({
+    queryKey: ["createBrand"],
+    mutationFn: async (values) => {
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("since", values.since);
+      formData.append("image", values.image);
+      const res = await api.post("/brand/create-brand", formData);
+      return res.data;
+    },
+    onError: (error, onMutateResult) => {
+      // An error happened!
+      console.log(error);
+      console.log(`rolling back optimistic update with id ${onMutateResult}`);
+    },
+    onSuccess: (data) => {
+      console.log(data);
+      toastSuccess("Brand created successfully!");
+    },
+    onSettled: () => {
+      reset();
     },
   });
 };

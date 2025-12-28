@@ -46,7 +46,7 @@ export function CreateCategory() {
     createCategory.mutate(values);
   }
 
-  // pending
+  // pending state
   if (createCategory.isPending) {
     return (
       <div>

@@ -95,7 +95,7 @@ const data = {
       items: [
         {
           title: "Create-Brand",
-          url: "#",
+          url: "create-brand",
         },
         {
           title: "Brand-List",
