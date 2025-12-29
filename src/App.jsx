@@ -11,6 +11,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import SubCategoryList from "./components/dashboard/SubCategory/SubCategoryList";
 import CreateBrand from "./components/dashboard/Brand/CreateBrand";
+import BrandList from "./components/dashboard/Brand/BrandList";
+import EditBrand from "./components/dashboard/Brand/EditBrand";
 function App() {
   const queryClient = new QueryClient();
   return (
@@ -27,6 +29,8 @@ function App() {
             <Route path="/create-subcategory" element={<SubCategory />} />
             <Route path="/subcategory-list" element={<SubCategoryList />} />
             <Route path="/create-brand" element={<CreateBrand />} />
+            <Route path="/brand-list" element={<BrandList />} />
+            <Route path="/edit-brand/:slug" element={<EditBrand />} />
           </Route>
           {/* Auth */}
           <Route path="/login" element={<Login />} />

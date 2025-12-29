@@ -108,3 +108,43 @@ export const useCreateBrand = () => {
     },
   });
 };
+
+//get all brands
+export const useGetAllBrand = () => {
+  return useQuery({
+    queryKey: ["getAllBrand"],
+    queryFn: async () => {
+      const res = await api.get("/brand/all-brand");
+      return res.data;
+    },
+  });
+};
+
+//Edit brand
+export const useEditBrand = (slug) => {
+  return useMutation({
+    queryKey: ["editBrand", slug],
+    mutationFn: async (values) => {
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("since", values.since);
+      if (values.image) {
+        formData.append("image", values.image);
+      }
+      const res = await api.put(`/brand/update-brand/${slug}`, formData);
+      return res.data;
+    },
+    onError: (error, onMutateResult) => {
+      // An error happened!
+      console.log(error);
+      console.log(`rolling back optimistic update with id ${onMutateResult}`);
+    },
+    onSuccess: (data) => {
+      console.log(data);
+      toastSuccess("Brand updated successfully!");
+    },
+    onSettled: () => {
+      reset();
+    },
+  });
+};

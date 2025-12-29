@@ -99,7 +99,7 @@ const data = {
         },
         {
           title: "Brand-List",
-          url: "#",
+          url: "brand-list",
         },
       ],
     },
