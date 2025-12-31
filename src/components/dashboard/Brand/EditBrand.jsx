@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Card,
@@ -21,8 +21,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useEditBrand } from "../../../hooks/api";
-import { useNavigate } from "react-router";
+import { useEditBrand, useGetSingleBrand } from "../../../hooks/api";
+import { useNavigate, useParams } from "react-router";
+import ErrorPage from "../../pages/ErrorPage";
+import FullScreenLoader from "../../ui/FullScreenLoader";
 
 /* =========================
    Zod Schema
@@ -42,23 +44,53 @@ const formSchema = z.object({
 
 const EditBrand = () => {
   // demo existing data (replace with API data)
-  const [preview, setPreview] = useState("https://via.placeholder.com/150");
   const navigate = useNavigate();
+  const { slug } = useParams();
+  const [preview, setPreview] = useState("");
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "Mi",
-      since: "2001",
+      name: "",
+      since: "",
       image: undefined,
     },
   });
 
-  const updateBrand = useEditBrand();
+  const updateBrand = useEditBrand(slug);
+  const { data, isPending, isError, refetch } = useGetSingleBrand(slug);
+  console.log(data);
 
   const onSubmit = (values) => {
     updateBrand.mutate(values);
   };
+
+  useEffect(() => {
+    if (data?.data) {
+      form.reset({
+        name: data.data.name,
+        since: String(data.data.since),
+        image: undefined,
+      });
+      setPreview(data.data.image);
+    }
+  }, [data, form]);
+
+  //pending and error handling
+  if (isPending) {
+    return <FullScreenLoader show />;
+  }
+
+  //error state
+  if (isError) {
+    return (
+      <ErrorPage
+        title="Failed to load sub-categories"
+        description="Please check your internet connection or try again."
+        onRetry={refetch}
+      />
+    );
+  }
 
   //handle back
   const handleBack = () => {

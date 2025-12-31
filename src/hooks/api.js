@@ -6,8 +6,8 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { api } from "../helpers/axios";
-import { Slide, toast } from "react-toastify";
-import { toastSuccess } from "../helpers/toast";
+import { toastError, toastSuccess } from "../helpers/toast";
+import { useNavigate } from "react-router";
 
 //create category
 export const useCreateCategory = () => {
@@ -28,7 +28,7 @@ export const useCreateCategory = () => {
     onSuccess: (data) => {
       console.log(data);
     },
-    onSettled: (data, error, variables, onMutateResult, context) => {
+    onSettled: () => {
       // Invalidate and refetch or reset
     },
   });
@@ -103,9 +103,7 @@ export const useCreateBrand = () => {
       console.log(data);
       toastSuccess("Brand created successfully!");
     },
-    onSettled: () => {
-      reset();
-    },
+    onSettled: () => {},
   });
 };
 
@@ -120,8 +118,20 @@ export const useGetAllBrand = () => {
   });
 };
 
-//Edit brand
+//get single brand
+export const useGetSingleBrand = (slug) => {
+  return useQuery({
+    queryKey: ["getSingleBrand", slug],
+    queryFn: async () => {
+      const res = await api.get(`/brand/single-brand/${slug}`);
+      return res.data;
+    },
+  });
+};
+
+//Edit/put brand
 export const useEditBrand = (slug) => {
+  const navigate = useNavigate();
   return useMutation({
     queryKey: ["editBrand", slug],
     mutationFn: async (values) => {
@@ -142,9 +152,33 @@ export const useEditBrand = (slug) => {
     onSuccess: (data) => {
       console.log(data);
       toastSuccess("Brand updated successfully!");
+      navigate("/brand-list");
+    },
+    onSettled: () => {},
+  });
+};
+
+//delete brand
+export const useDeleteBrand = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    queryKey: ["deleteBrand"],
+    mutationFn: async (slug) => {
+      return await api.delete(`brand/delete-brand/${slug}`);
+    },
+    onError: (error, onMutateResult) => {
+      // An error happened!
+      console.log(error);
+      console.log(`rolling back optimistic update with id ${onMutateResult}`);
+      toastError("Failed to delete brand. Please try again.");
+    },
+    onSuccess: (data) => {
+      console.log(data);
+      toastSuccess("Brand deleted successfully!");
+      queryClient.invalidateQueries({ queryKey: ["getAllBrand"] });
     },
     onSettled: () => {
-      reset();
+      // Invalidate and refetch or reset
     },
   });
 };

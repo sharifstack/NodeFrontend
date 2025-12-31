@@ -13,13 +13,26 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useGetAllBrand } from "../../../hooks/api";
+import { useDeleteBrand, useGetAllBrand } from "../../../hooks/api";
 import FullScreenLoader from "../../ui/FullScreenLoader";
 import ErrorPage from "../../pages/ErrorPage";
 import { useNavigate } from "react-router";
+import { useState } from "react";
 
 /* =========================
    Dummy UI Data (replace later)
@@ -47,8 +60,10 @@ const brands = [
 
 const BrandList = () => {
   const navigate = useNavigate();
+  const [brandLoading, setBrandLoading] = useState("");
 
   const { data, isPending, isError, refetch } = useGetAllBrand();
+  const deleteBrand = useDeleteBrand();
 
   //loading state
   if (isPending) {
@@ -73,6 +88,12 @@ const BrandList = () => {
   //edit brand
   const handleEdit = (slug) => {
     navigate(`/edit-brand/${slug}`);
+  };
+
+  //delete brand
+  const handledelete = (slug) => {
+    setBrandLoading(slug);
+    deleteBrand.mutate(slug);
   };
 
   return (
@@ -127,9 +148,41 @@ const BrandList = () => {
                     >
                       Edit
                     </Button>
-                    <Button size="sm" variant="destructive">
-                      Delete
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button size="sm" variant="destructive">
+                          Delete
+                        </Button>
+                      </AlertDialogTrigger>
+
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            delete the brand <b>{brand.name}</b>.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+                          <AlertDialogAction
+                            disabled={
+                              deleteBrand.isPending &&
+                              brandLoading === brand.slug
+                            }
+                            className="bg-red-600 hover:bg-red-700"
+                            onClick={() => handledelete(brand.slug)}
+                          >
+                            {deleteBrand.isPending &&
+                            brandLoading === brand.slug
+                              ? "Deleting..."
+                              : "Yes, Delete"}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </TableCell>
                 </TableRow>
               ))}
