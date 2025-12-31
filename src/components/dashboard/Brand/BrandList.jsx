@@ -28,6 +28,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Loader2 } from "lucide-react";
 import { useDeleteBrand, useGetAllBrand } from "../../../hooks/api";
 import FullScreenLoader from "../../ui/FullScreenLoader";
 import ErrorPage from "../../pages/ErrorPage";
@@ -176,9 +177,14 @@ const BrandList = () => {
                             onClick={() => handledelete(brand.slug)}
                           >
                             {deleteBrand.isPending &&
-                            brandLoading === brand.slug
-                              ? "Deleting..."
-                              : "Yes, Delete"}
+                            brandLoading === brand.slug ? (
+                              <>
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                Deleting
+                              </>
+                            ) : (
+                              "Yes, Delete"
+                            )}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
