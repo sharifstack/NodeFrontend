@@ -8,10 +8,12 @@ import {
   Command,
   Frame,
   GalleryVerticalEnd,
+  Handbag,
   Map,
   PackageSearch,
   PieChart,
   Settings2,
+  ShoppingBasket,
   ShoppingCart,
   Smartphone,
   SquareTerminal,
@@ -100,6 +102,40 @@ const data = {
         {
           title: "Brand-List",
           url: "brand-list",
+        },
+      ],
+    },
+
+    {
+      title: "Single Variant Product",
+      url: "#",
+      icon: ShoppingBasket,
+      isActive: true,
+      items: [
+        {
+          title: "Create Single Variant",
+          url: "create-single-variant",
+        },
+        {
+          title: "Single Variant List",
+          url: "single-variant-list",
+        },
+      ],
+    },
+
+    {
+      title: "Multiple Variant Product",
+      url: "#",
+      icon: Handbag,
+      isActive: true,
+      items: [
+        {
+          title: "Create Multiple Variant",
+          url: "create-variant-multiple",
+        },
+        {
+          title: "Multiple Variant List",
+          url: "multiple-variant-list",
         },
       ],
     },

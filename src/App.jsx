@@ -13,6 +13,11 @@ import SubCategoryList from "./components/dashboard/SubCategory/SubCategoryList"
 import CreateBrand from "./components/dashboard/Brand/CreateBrand";
 import BrandList from "./components/dashboard/Brand/BrandList";
 import EditBrand from "./components/dashboard/Brand/EditBrand";
+import CreateSingleVariant from "./components/dashboard/SingleVariantProduct/CreateSingleVariant";
+import SingleVariantList from "./components/dashboard/SingleVariantProduct/SingleVariantList";
+import CreateMultipleVariant from "./components/dashboard/MultipleVariantProduct/CreateMultipleVariant";
+import MultipleVariantList from "./components/dashboard/MultipleVariantProduct/MultipleVariantList";
+import SingleVariantDetails from "./components/dashboard/SingleVariantProduct/SingleVariantDetails";
 function App() {
   const queryClient = new QueryClient();
   return (
@@ -31,6 +36,26 @@ function App() {
             <Route path="/create-brand" element={<CreateBrand />} />
             <Route path="/brand-list" element={<BrandList />} />
             <Route path="/edit-brand/:slug" element={<EditBrand />} />
+            <Route
+              path="/create-single-variant"
+              element={<CreateSingleVariant />}
+            />
+            <Route
+              path="/single-variant-list"
+              element={<SingleVariantList />}
+            />
+            <Route
+              path="/single-variant-details/:slug"
+              element={<SingleVariantDetails />}
+            />
+            <Route
+              path="/create-variant-multiple"
+              element={<CreateMultipleVariant />}
+            />
+            <Route
+              path="/multiple-variant-list"
+              element={<MultipleVariantList />}
+            />
           </Route>
           {/* Auth */}
           <Route path="/login" element={<Login />} />

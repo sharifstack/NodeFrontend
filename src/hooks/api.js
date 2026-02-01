@@ -182,3 +182,98 @@ export const useDeleteBrand = () => {
     },
   });
 };
+
+//Create Product
+
+export const useCreateSingleVariant = () => {
+  return useMutation({
+    queryKey: ["createSingleVariant"],
+    mutationFn: (values) => {
+      const formData = new FormData();
+      for (let key in values) {
+        if (key === "image") {
+          const files = values[key];
+          if (files && files.length > 0) {
+            for (let i = 0; i < files.length; i++) {
+              formData.append("image", files[i]);
+            }
+          }
+        } else {
+          formData.append(key, values[key]);
+        }
+      }
+      return api.post("/product/create-product", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    },
+
+    onError: (error, onMutateResult) => {
+      console.log(error);
+      console.log(`rolling back optimistic update with id ${onMutateResult}`);
+    },
+    onSuccess: (data) => {
+      console.log(data);
+      toastSuccess("Single Variant Product created successfully!");
+    },
+    onSettled: () => {},
+  });
+};
+
+//get single Variant Product
+export const useGetSingleVariant = (type) => {
+  return useQuery({
+    queryKey: [`${type} product`],
+    queryFn: async () => {
+      if (type) {
+        const res = await api.get(
+          `/product/getall-products?productType=${type}`,
+        );
+        return res.data;
+      } else {
+        const res = await api.get("/product/getall-products");
+        return res.data;
+      }
+    },
+  });
+};
+
+//One Single Variant Product
+export const useOneSingleVariant = (slug) => {
+  return useQuery({
+    queryKey: [`singleproduct`],
+    queryFn: async () => {
+      const res = await api.get(`/product/single-product/`, {
+        params: { slug },
+      });
+      return res.data;
+    },
+    enabled: !!slug,
+  });
+};
+
+//delete single Variant Product
+export const useDeleteSingleVariant = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    queryKey: ["deleteSingleVariant"],
+    mutationFn: async (slug) => {
+      return await api.delete(`/product/delete-product/${slug}`);
+    },
+    onError: (error, onMutateResult) => {
+      // An error happened!
+      console.log(error);
+      console.log(`rolling back optimistic update with id ${onMutateResult}`);
+      toastError("Failed to delete brand. Please try again.");
+    },
+    onSuccess: (data) => {
+      console.log(data);
+      toastSuccess("Single Variant Product deleted successfully!");
+      queryClient.invalidateQueries({ queryKey: [`${type} product`] });
+    },
+    onSettled: () => {
+      // Invalidate and refetch or reset
+    },
+  });
+};
