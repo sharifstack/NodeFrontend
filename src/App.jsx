@@ -18,6 +18,7 @@ import SingleVariantList from "./components/dashboard/SingleVariantProduct/Singl
 import CreateMultipleVariant from "./components/dashboard/MultipleVariantProduct/CreateMultipleVariant";
 import MultipleVariantList from "./components/dashboard/MultipleVariantProduct/MultipleVariantList";
 import SingleVariantDetails from "./components/dashboard/SingleVariantProduct/SingleVariantDetails";
+import DashboardHome from "./components/pages/DashboardHome";
 function App() {
   const queryClient = new QueryClient();
   return (
@@ -25,6 +26,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />}>
+            <Route index element={<DashboardHome />} />
             <Route path="/create-category" element={<CreateCategory />} />
             <Route path="/category-list" element={<CategoryList />} />
             <Route

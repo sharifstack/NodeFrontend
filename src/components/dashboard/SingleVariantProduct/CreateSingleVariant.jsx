@@ -118,8 +118,8 @@ const CreateSingleVariant = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto my-20">
-      <Card className="rounded-2xl shadow-2xl">
+    <div className="max-w-5xl mx-auto my-2">
+      <Card className="rounded-2xl  shadow-2xl">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">
             Create Single Variant Product
@@ -131,7 +131,7 @@ const CreateSingleVariant = () => {
 
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {/* Name & SKU */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
