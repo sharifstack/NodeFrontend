@@ -19,6 +19,7 @@ import CreateMultipleVariant from "./components/dashboard/MultipleVariantProduct
 import MultipleVariantList from "./components/dashboard/MultipleVariantProduct/MultipleVariantList";
 import SingleVariantDetails from "./components/dashboard/SingleVariantProduct/SingleVariantDetails";
 import DashboardHome from "./components/pages/DashboardHome";
+import EditSingleVariant from "./components/dashboard/SingleVariantProduct/EditSingleVariant";
 function App() {
   const queryClient = new QueryClient();
   return (
@@ -58,7 +59,13 @@ function App() {
               path="/multiple-variant-list"
               element={<MultipleVariantList />}
             />
+
+            <Route
+              path="/edit-single-variant/:slug"
+              element={<EditSingleVariant />}
+            />
           </Route>
+
           {/* Auth */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Registration />} />

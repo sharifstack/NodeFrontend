@@ -253,6 +253,52 @@ export const useOneSingleVariant = (slug) => {
   });
 };
 
+//Edit/put Single Variant Product
+export const useEditSingleVariant = () => {
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: async ({ slug, values }) => {
+      return api.put(`/product/update-product/${slug}`, values, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    },
+
+    onSuccess: () => {
+      toastSuccess("Product updated successfully!");
+      navigate(-1);
+    },
+
+    onError: (err) => {
+      console.error(err);
+    },
+  });
+};
+
+export const useUploadSingleVariant = () => {
+  return useMutation({
+    mutationFn: async ({ slug, images }) => {
+      const formData = new FormData();
+
+      images.forEach((img) => {
+        formData.append("image", img);
+      });
+
+      return api.put(`/product/upload-productimg/${slug}`, formData);
+    },
+
+    onSuccess: () => {
+      toastSuccess("Image uploaded successfully!");
+    },
+
+    onError: (err) => {
+      console.error(err);
+    },
+  });
+};
+
 //delete single Variant Product
 export const useDeleteSingleVariant = () => {
   const queryClient = useQueryClient();

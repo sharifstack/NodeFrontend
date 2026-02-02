@@ -38,6 +38,7 @@ import FullScreenLoader from "../../ui/FullScreenLoader";
 import ErrorPage from "../../pages/ErrorPage";
 import {
   useDeleteSingleVariant,
+  useEditSingleVariant,
   useGetSingleVariant,
 } from "../../../hooks/api";
 
@@ -77,7 +78,9 @@ const SingleVariantList = () => {
     isPending,
     isError,
   } = useGetSingleVariant("single");
+
   const deleteVariant = useDeleteSingleVariant("single");
+
   // const { data, isPending, isError, refetch } = useGetAllSingleVariants();
   // const deleteVariant = useDeleteSingleVariant();
 
@@ -95,6 +98,10 @@ const SingleVariantList = () => {
       />
     );
   }
+
+  const handleEdit = (slug) => {
+    navigate(`/edit-single-variant/${slug}`);
+  };
 
   const handleAdd = () => {
     navigate("/create-single-variant");
@@ -158,7 +165,7 @@ const SingleVariantList = () => {
 
                     <Button
                       className="cursor-pointer"
-                      onClick={() => handleEdit(brand.slug)}
+                      onClick={() => handleEdit(product.slug)}
                       size="sm"
                       variant="outline"
                     >

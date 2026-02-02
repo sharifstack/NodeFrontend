@@ -59,7 +59,6 @@ const EditBrand = () => {
 
   const updateBrand = useEditBrand(slug);
   const { data, isPending, isError, refetch } = useGetSingleBrand(slug);
-  console.log(data);
 
   const onSubmit = (values) => {
     updateBrand.mutate(values);
