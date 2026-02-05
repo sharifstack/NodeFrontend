@@ -28,7 +28,8 @@ import { useEffect } from "react";
 const EditSingleVariant = () => {
   const navigate = useNavigate();
   const { slug } = useParams();
-  const [images, setImages] = useState([]);
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
 
   const { data, isPending, isError } = useOneSingleVariant(slug);
   const editSingleVariant = useEditSingleVariant();
@@ -66,7 +67,11 @@ const EditSingleVariant = () => {
   const product = data.data;
 
   const handleImageChange = (e) => {
-    setImages([...e.target.files]);
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setImage(file);
+    setPreview(URL.createObjectURL(file));
   };
 
   const handleChange = (field, value) => {
@@ -74,11 +79,15 @@ const EditSingleVariant = () => {
   };
 
   const handleImageUpload = () => {
-    if (!images.length) return;
+    if (!image.length) return;
     uploadImage.mutate({ slug, images });
   };
 
   const handleSubmit = () => {
+    if (image.length > 0) {
+      uploadImage.mutate({ slug, image });
+    }
+
     editSingleVariant.mutate({
       slug,
       values: form,
@@ -105,13 +114,12 @@ const EditSingleVariant = () => {
           {/* Image */}
           <div className="flex flex-col items-center gap-4">
             <Avatar className="h-28 w-28">
-              <AvatarImage src={product.image} />
+              <AvatarImage src={preview || product.image} />
               <AvatarFallback>{product.name?.[0]}</AvatarFallback>
             </Avatar>
 
             <input
               type="file"
-              multiple
               hidden
               id="product-image"
               onChange={handleImageChange}
@@ -124,8 +132,6 @@ const EditSingleVariant = () => {
             >
               Change Image
             </Button>
-
-            <Button onClick={handleImageUpload}>Upload Image</Button>
           </div>
 
           {/* Product Name */}

@@ -46,8 +46,8 @@ import {
 // import { useGetAllSingleVariants, useDeleteSingleVariant } from "../../../hooks/api";
 
 /* =========================
-   DUMMY DATA (UI ONLY)
-========================= */
+    DUMMY DATA (UI ONLY)
+  ========================= */
 const products = [
   {
     _id: "1",
@@ -113,30 +113,29 @@ const SingleVariantList = () => {
   };
 
   return (
-    <div className="w-2/4 mx-auto my-[12vh]">
+    <div className="w-full px-3 sm:px-4 md:px-6 lg:w-3/4 xl:w-2/3 mx-auto my-6 md:my-[12vh]">
       <Card className="rounded-2xl shadow-2xl">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle className="text-2xl font-semibold">
+        <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-1">
+            <CardTitle className="text-xl sm:text-2xl font-semibold">
               Single Variant Products
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-sm sm:text-base">
               Manage all single-variant products from here
             </CardDescription>
           </div>
 
-          <Button size="sm" onClick={handleAdd}>
+          <Button size="sm" className="w-full sm:w-auto" onClick={handleAdd}>
             Add Product
           </Button>
         </CardHeader>
 
-        <CardContent>
-          <Table>
+        <CardContent className="overflow-x-auto">
+          <Table className="min-w-[520px]">
             <TableHeader>
               <TableRow>
-                <TableHead className="w-16">Image</TableHead>
+                <TableHead className="w-14">Image</TableHead>
                 <TableHead>Product Name</TableHead>
-
                 <TableHead className="text-right">Action</TableHead>
               </TableRow>
             </TableHeader>
@@ -146,71 +145,89 @@ const SingleVariantList = () => {
                 <TableRow key={product._id}>
                   {/* Image */}
                   <TableCell>
-                    <Avatar className="h-10 w-10">
+                    <Avatar className="h-9 w-9 sm:h-10 sm:w-10">
                       <AvatarImage src={product.image} />
                       <AvatarFallback>{product.name}</AvatarFallback>
                     </Avatar>
                   </TableCell>
 
                   {/* Product Info */}
-                  <TableCell>
-                    <div className="font-medium">{product.name}</div>
+                  <TableCell className="max-w-[180px] truncate sm:max-w-none">
+                    <div className="font-medium text-sm sm:text-base truncate">
+                      {product.name}
+                    </div>
                   </TableCell>
 
                   {/* Action */}
-                  <TableCell className="text-right space-x-2">
-                    <Link to={`/single-variant-details/${product.slug}`}>
-                      <Button variant="outline">View Product</Button>
-                    </Link>
-
-                    <Button
-                      className="cursor-pointer"
-                      onClick={() => handleEdit(product.slug)}
-                      size="sm"
-                      variant="outline"
-                    >
-                      Edit
-                    </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button size="sm" variant="destructive">
-                          Delete
+                  <TableCell className="text-right">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+                      <Link to={`/single-variant-details/${product.slug}`}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="w-full sm:w-auto"
+                        >
+                          View
                         </Button>
-                      </AlertDialogTrigger>
+                      </Link>
 
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This action cannot be undone. This will permanently
-                            delete the <b>{product.name}</b> Product.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
+                      <Button
+                        onClick={() => handleEdit(product.slug)}
+                        size="sm"
+                        variant="outline"
+                        className="w-full sm:w-auto"
+                      >
+                        Edit
+                      </Button>
 
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-
-                          <AlertDialogAction
-                            disabled={
-                              deleteVariant.isPending &&
-                              singleVariantLoading === product.slug
-                            }
-                            className="bg-red-600 hover:bg-red-700"
-                            onClick={() => handleDelete(product.slug)}
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            className="w-full sm:w-auto"
                           >
-                            {deleteVariant.isPending &&
-                            singleVariantLoading === product.slug ? (
-                              <>
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                                Deleting
-                              </>
-                            ) : (
-                              "Yes, Delete"
-                            )}
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                            Delete
+                          </Button>
+                        </AlertDialogTrigger>
+
+                        <AlertDialogContent className="max-w-[90vw] sm:max-w-lg">
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will
+                              permanently delete the <b>{product.name}</b>{" "}
+                              Product.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+
+                          <AlertDialogFooter className="flex-col gap-2 sm:flex-row">
+                            <AlertDialogCancel className="w-full sm:w-auto">
+                              Cancel
+                            </AlertDialogCancel>
+
+                            <AlertDialogAction
+                              disabled={
+                                deleteVariant.isPending &&
+                                singleVariantLoading === product.slug
+                              }
+                              className="bg-red-600 hover:bg-red-700 w-full sm:w-auto"
+                              onClick={() => handleDelete(product.slug)}
+                            >
+                              {deleteVariant.isPending &&
+                              singleVariantLoading === product.slug ? (
+                                <>
+                                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                                  Deleting
+                                </>
+                              ) : (
+                                "Yes, Delete"
+                              )}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

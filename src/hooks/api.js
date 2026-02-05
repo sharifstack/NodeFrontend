@@ -279,10 +279,10 @@ export const useEditSingleVariant = () => {
 
 export const useUploadSingleVariant = () => {
   return useMutation({
-    mutationFn: async ({ slug, images }) => {
+    mutationFn: async ({ slug, image }) => {
       const formData = new FormData();
 
-      images.forEach((img) => {
+      image.forEach((img) => {
         formData.append("image", img);
       });
 
@@ -307,16 +307,15 @@ export const useDeleteSingleVariant = () => {
     mutationFn: async (slug) => {
       return await api.delete(`/product/delete-product/${slug}`);
     },
-    onError: (error, onMutateResult) => {
+    onError: (error) => {
       // An error happened!
       console.log(error);
-      console.log(`rolling back optimistic update with id ${onMutateResult}`);
-      toastError("Failed to delete brand. Please try again.");
+      toastError("Failed to delete product. Please try again.");
     },
     onSuccess: (data) => {
       console.log(data);
       toastSuccess("Single Variant Product deleted successfully!");
-      queryClient.invalidateQueries({ queryKey: [`${type} product`] });
+      queryClient.invalidateQueries({ queryKey: ["single product"] });
     },
     onSettled: () => {
       // Invalidate and refetch or reset
