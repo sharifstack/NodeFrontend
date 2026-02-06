@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: `http://localhost:3000/api/v1`,
+  baseURL: `${import.meta.env.VITE_API_URL}/api/v1`,
   withCredentials: true,
 });
 
@@ -16,7 +16,7 @@ api.interceptors.request.use(
   },
   function (error) {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Response Interceptor
@@ -32,9 +32,9 @@ api.interceptors.response.use(
 
       try {
         const response = await axios.post(
-          "http://localhost:3000/api/v1/auth/refresh-token",
+          `${import.meta.env.VITE_API_URL}/api/v1/auth/refresh-token`,
           {},
-          { withCredentials: true }
+          { withCredentials: true },
         );
 
         if (response.status === 200) {
@@ -59,6 +59,6 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 export { api };
