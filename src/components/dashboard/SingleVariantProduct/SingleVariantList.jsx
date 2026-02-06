@@ -32,7 +32,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Loader2 } from "lucide-react";
 
 import { Link, useNavigate } from "react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import FullScreenLoader from "../../ui/FullScreenLoader";
 import ErrorPage from "../../pages/ErrorPage";
@@ -99,6 +99,8 @@ const SingleVariantList = () => {
     );
   }
 
+
+
   const handleEdit = (slug) => {
     navigate(`/edit-single-variant/${slug}`);
   };
@@ -111,6 +113,8 @@ const SingleVariantList = () => {
     setSingleVariantLoading(slug);
     deleteVariant.mutate(slug);
   };
+
+
 
   return (
     <div className="w-full px-3 sm:px-4 md:px-6 lg:w-3/4 xl:w-2/3 mx-auto my-6 md:my-[12vh]">
