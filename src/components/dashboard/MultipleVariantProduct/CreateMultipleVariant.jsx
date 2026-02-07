@@ -121,7 +121,7 @@ const CreateMultipleVariant = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto my-6">
+    <div className=" w-full max-w-5xl mx-auto my-2">
       <Card className="rounded-2xl shadow-xl">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl">

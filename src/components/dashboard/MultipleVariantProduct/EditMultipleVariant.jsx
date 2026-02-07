@@ -136,7 +136,7 @@ const EditMultipleVariant = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto my-6">
+    <div className="w-full max-w-5xl mx-auto my-2">
       <Card className="rounded-2xl shadow-xl">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl">
@@ -151,7 +151,7 @@ const EditMultipleVariant = () => {
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-6 pt-6"
+              className="space-y-5"
             >
               {/* Name */}
               <FormField
