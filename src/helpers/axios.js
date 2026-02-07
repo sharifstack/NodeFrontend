@@ -1,8 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_API_URL}/api/v1`,
-  
+  baseURL: `http://localhost:3000/api/v1`,
   withCredentials: true,
 });
 
@@ -10,6 +9,7 @@ const api = axios.create({
 api.interceptors.request.use(
   function (config) {
     const accessToken = localStorage.getItem("accessToken");
+    console.log("token after login", localStorage.getItem("accessToken"));
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
@@ -33,7 +33,7 @@ api.interceptors.response.use(
 
       try {
         const response = await axios.post(
-          `${import.meta.env.VITE_API_URL}/api/v1/auth/refresh-token`,
+          `http://localhost:3000/api/v1/auth/refresh-token`,
           {},
           { withCredentials: true },
         );

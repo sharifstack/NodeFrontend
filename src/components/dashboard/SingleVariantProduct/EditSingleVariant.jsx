@@ -31,7 +31,7 @@ const EditSingleVariant = () => {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
 
-  const { data, isPending, isError } = useOneSingleVariant(slug);
+  const { data, isPending, isError, refetch } = useOneSingleVariant(slug);
   const editSingleVariant = useEditSingleVariant();
   const uploadImage = useUploadSingleVariant();
 
@@ -60,6 +60,7 @@ const EditSingleVariant = () => {
       <ErrorPage
         title="Failed to load product"
         description="Please try again later."
+        onRetry={refetch}
       />
     );
   }
@@ -78,13 +79,8 @@ const EditSingleVariant = () => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleImageUpload = () => {
-    if (!image.length) return;
-    uploadImage.mutate({ slug, images });
-  };
-
   const handleSubmit = () => {
-    if (image.length > 0) {
+    if (image) {
       uploadImage.mutate({ slug, image });
     }
 
@@ -199,7 +195,7 @@ const EditSingleVariant = () => {
 
             <Button
               onClick={handleSubmit}
-              disabled={editSingleVariant.isPending}
+              disabled={editSingleVariant.isPending || uploadImage.isPending}
               className="gap-2"
             >
               {editSingleVariant.isPending ? (

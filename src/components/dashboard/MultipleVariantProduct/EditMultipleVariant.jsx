@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate, useParams } from "react-router";
 
 import {
   Select,
@@ -30,28 +31,29 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
 
 import {
-  useCreateSingleVariant,
+  useEditSingleVariant,
   useGetAllBrand,
   useGetAllCategories,
+  useOneSingleVariant,
 } from "../../../hooks/api";
 
 import FullScreenLoader from "../../ui/FullScreenLoader";
 import ErrorPage from "../../pages/ErrorPage";
 
 /* =========================
-   ZOD SCHEMA
+   ZOD SCHEMA (SAME AS CREATE)
 ========================= */
 const formSchema = z.object({
-  name: z.string().min(2, "Name is required"),
-  description: z.string().min(10, "Description is required"),
+  name: z.string().min(2),
+  description: z.string().min(10),
 
   category: z.string().min(1),
   subCategory: z.string().min(1),
   brand: z.string().min(1),
 
-  // tag: z.array(z.string()).default([]),
   manufactureCountry: z.string().optional(),
   warrantyInformation: z.string().optional(),
   warrantyexpires: z.string().optional(),
@@ -63,7 +65,17 @@ const formSchema = z.object({
 /* =========================
    COMPONENT
 ========================= */
-const CreateMultipleVariant = () => {
+const EditMultipleVariant = () => {
+  const { slug } = useParams();
+  const navigate = useNavigate();
+
+  const { data, isPending, isError, refetch } = useOneSingleVariant(slug);
+
+  const editMultipleVariant = useEditSingleVariant();
+
+  const { data: categoryData } = useGetAllCategories();
+  const { data: brandData } = useGetAllBrand();
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -72,7 +84,6 @@ const CreateMultipleVariant = () => {
       category: "",
       subCategory: "",
       brand: "",
-      // tag: [],
       manufactureCountry: "",
       warrantyInformation: "",
       warrantyexpires: "",
@@ -81,43 +92,47 @@ const CreateMultipleVariant = () => {
     },
   });
 
-  const { data: categoryData, isPending: categoryPending } =
-    useGetAllCategories();
-  const { data: brandData, isPending, isError, refetch } = useGetAllBrand();
-  const createMultipleVarient = useCreateSingleVariant();
-
-  const [subCategoryList, setSubCategoryList] = useState([]);
-
-  const selectedCategoryId = form.watch("category");
-
+  /* =========================
+     SET DEFAULT VALUES
+  ========================= */
   useEffect(() => {
-    if (!selectedCategoryId || !categoryData?.data) {
-      setSubCategoryList([]);
-      return;
+    if (data?.data) {
+      const p = data.data;
+
+      form.reset({
+        name: p.name || "",
+        description: p.description || "",
+        category: p.category?._id || "",
+        subCategory: p.subCategory?._id || "",
+        brand: p.brand?._id || "",
+        manufactureCountry: p.manufactureCountry || "",
+        warrantyInformation: p.warrantyInformation || "",
+        warrantyexpires: p.warrantyexpires
+          ? p.warrantyexpires.split("T")[0]
+          : "",
+        shippingInformation: p.shippingInformation || "",
+        varientType: "multipleVarient",
+      });
     }
-
-    const selected = categoryData.data.find(
-      (item) => item._id === selectedCategoryId,
-    );
-
-    setSubCategoryList(selected?.subCategory || []);
-    form.setValue("subCategory", "");
-  }, [selectedCategoryId, categoryData]);
+  }, [data]);
 
   if (isPending) return <FullScreenLoader show />;
 
   if (isError) {
     return (
       <ErrorPage
-        title="Failed to load data"
-        description="Please try again"
+        title="Failed to load product"
+        description="Please try again later."
         onRetry={refetch}
       />
     );
   }
 
   const onSubmit = (values) => {
-    createMultipleVarient.mutate(values);
+    editMultipleVariant.mutate({
+      slug,
+      values,
+    });
   };
 
   return (
@@ -125,16 +140,19 @@ const CreateMultipleVariant = () => {
       <Card className="rounded-2xl shadow-xl">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl">
-            Create Multiple Variant Product
+            Edit Multiple Variant Product
           </CardTitle>
-          <CardDescription>
-            Base product info before adding variants
-          </CardDescription>
+          <CardDescription>Update base product information</CardDescription>
         </CardHeader>
+
+        <Separator />
 
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-6 pt-6"
+            >
               {/* Name */}
               <FormField
                 control={form.control}
@@ -165,7 +183,7 @@ const CreateMultipleVariant = () => {
                 )}
               />
 
-              {/* Category / SubCategory / Brand */}
+              {/* Category / Sub / Brand */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <FormField
                   control={form.control}
@@ -176,7 +194,6 @@ const CreateMultipleVariant = () => {
                       <Select
                         value={field.value}
                         onValueChange={field.onChange}
-                        disabled={categoryPending}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -191,7 +208,6 @@ const CreateMultipleVariant = () => {
                           ))}
                         </SelectContent>
                       </Select>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -205,7 +221,6 @@ const CreateMultipleVariant = () => {
                       <Select
                         value={field.value}
                         onValueChange={field.onChange}
-                        disabled={!selectedCategoryId}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -213,14 +228,15 @@ const CreateMultipleVariant = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {subCategoryList.map((sub) => (
-                            <SelectItem key={sub._id} value={sub._id}>
-                              {sub.name}
-                            </SelectItem>
-                          ))}
+                          {categoryData?.data
+                            ?.find((c) => c._id === form.watch("category"))
+                            ?.subCategory?.map((sub) => (
+                              <SelectItem key={sub._id} value={sub._id}>
+                                {sub.name}
+                              </SelectItem>
+                            ))}
                         </SelectContent>
                       </Select>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -248,42 +264,22 @@ const CreateMultipleVariant = () => {
                           ))}
                         </SelectContent>
                       </Select>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
 
               {/* Extra Info */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="manufactureCountry"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Manufacture Country</FormLabel>
-                      <Input {...field} />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="tag"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tag</FormLabel>
-                      <Input
-                        onChange={(e) =>
-                          field.onChange(
-                            e.target.value.split(",").map((t) => t.trim()),
-                          )
-                        }
-                      />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="manufactureCountry"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Manufacture Country</FormLabel>
+                    <Input {...field} />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={form.control}
@@ -302,10 +298,7 @@ const CreateMultipleVariant = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Warranty Expiry Date</FormLabel>
-                    <FormControl>
-                      <Input type="date" {...field} />
-                    </FormControl>
-                    <FormMessage />
+                    <Input type="date" {...field} />
                   </FormItem>
                 )}
               />
@@ -322,7 +315,7 @@ const CreateMultipleVariant = () => {
               />
 
               <Button type="submit" className="w-full py-6 text-lg">
-                Create Base Product
+                Save Changes
               </Button>
             </form>
           </Form>
@@ -332,4 +325,4 @@ const CreateMultipleVariant = () => {
   );
 };
 
-export default CreateMultipleVariant;
+export default React.memo(EditMultipleVariant);

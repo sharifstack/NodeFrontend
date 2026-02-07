@@ -37,6 +37,8 @@ import {
   useGetAllBrand,
   useGetAllCategories,
 } from "../../../hooks/api";
+import FullScreenLoader from "../../ui/FullScreenLoader";
+import ErrorPage from "../../pages/ErrorPage";
 
 /* =========================
    ZOD SCHEMA
@@ -91,13 +93,11 @@ const CreateSingleVariant = () => {
 
   const { data: categoryData, isPending: categoryPending } =
     useGetAllCategories();
-  const { data: brandData, isPending: brandPending } = useGetAllBrand();
+  const { data: brandData, isPending, isError, refetch } = useGetAllBrand();
   const singleVarint = useCreateSingleVariant();
   const [subCategoryList, setSubCategoryList] = useState([]);
 
   const selectedCategoryId = form.watch("category");
-  const selectedUnit = form.watch("unit");
-
   useEffect(() => {
     if (!selectedCategoryId || !categoryData?.data) {
       setSubCategoryList([]);
@@ -112,6 +112,19 @@ const CreateSingleVariant = () => {
     form.setValue("subCategory", "");
   }, [selectedCategoryId, categoryData]);
 
+  if (isPending) {
+    return <FullScreenLoader show={true} />;
+  }
+
+  if (isError) {
+    return (
+      <ErrorPage
+        title="Failed to load products"
+        description="Please check your internet connection or try again."
+        onRetry={refetch}
+      />
+    );
+  }
   const onSubmit = (values) => {
     console.log(values);
     singleVarint.mutate(values);
@@ -241,7 +254,7 @@ const CreateSingleVariant = () => {
                       <Select
                         value={field.value}
                         onValueChange={field.onChange}
-                        disabled={brandPending}
+                        disabled={isPending}
                       >
                         <FormControl>
                           <SelectTrigger>

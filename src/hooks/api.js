@@ -277,14 +277,12 @@ export const useEditSingleVariant = () => {
   });
 };
 
+//Upload Single Variant Product Image
 export const useUploadSingleVariant = () => {
   return useMutation({
     mutationFn: async ({ slug, image }) => {
       const formData = new FormData();
-
-      image.forEach((img) => {
-        formData.append("image", img);
-      });
+      formData.append("image", image);
 
       return api.put(`/product/upload-productimg/${slug}`, formData);
     },
@@ -316,6 +314,30 @@ export const useDeleteSingleVariant = () => {
       console.log(data);
       toastSuccess("Single Variant Product deleted successfully!");
       queryClient.invalidateQueries({ queryKey: ["single product"] });
+    },
+    onSettled: () => {
+      // Invalidate and refetch or reset
+    },
+  });
+};
+
+//delete multiple Variant Product
+export const useDeleteMultipleVariant = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    queryKey: ["deleteMultipleVariant"],
+    mutationFn: async (slug) => {
+      return await api.delete(`/product/delete-product/${slug}`);
+    },
+    onError: (error) => {
+      // An error happened!
+      console.log(error);
+      toastError("Failed to delete product. Please try again.");
+    },
+    onSuccess: (data) => {
+      console.log(data);
+      toastSuccess("Multiple Variant Product deleted successfully!");
+      queryClient.invalidateQueries({ queryKey: ["multiple product"] });
     },
     onSettled: () => {
       // Invalidate and refetch or reset
